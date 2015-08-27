@@ -1,0 +1,58 @@
+<web-app id="WebApp_ID" version="2.4" 
+	xmlns="http://java.sun.com/xml/ns/j2ee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+	http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+	<display-name>Spring + JAX-WS</display-name>
+
+	<servlet>
+    	<servlet-name>jaxws-servlet</servlet-name>
+    	<servlet-class>
+    		com.sun.xml.ws.transport.http.servlet.WSSpringServlet
+    	</servlet-class>
+  	</servlet>
+	
+	<servlet-mapping>
+        <servlet-name>jaxws-servlet</servlet-name>
+        <url-pattern>/hello</url-pattern>
+    </servlet-mapping>
+
+	<servlet>
+		<servlet-name>TestingPage.jsp</servlet-name>
+		<jsp-file>/WEB-INF/TestingPage.jsp</jsp-file>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>TestingPage.jsp</servlet-name>
+		<url-pattern>/TestingPage.htm</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Response.jsp</servlet-name>
+		<jsp-file>/WEB-INF/Response.jsp</jsp-file>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Response.jsp</servlet-name>
+		<url-pattern>/Response.htm</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>TestServlet</servlet-name>
+		<servlet-class>com.mkyong.ws.TestServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>TestServlet</servlet-name>
+		<url-pattern>/anyLocation</url-pattern>
+	</servlet-mapping>
+ 
+    <!-- Register Spring Listener -->
+  	<listener>
+    	<listener-class>
+    		org.springframework.web.context.ContextLoaderListener
+    	</listener-class>
+  	</listener>
+  	
+</web-app>

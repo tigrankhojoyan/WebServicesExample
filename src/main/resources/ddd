@@ -1,0 +1,53 @@
+inner node is equal to =========== ns1:cavv
+inner node is equal to =========== ns1:cavvAlgorithm
+inner node is equal to =========== ns1:eci
+inner node is equal to =========== ns1:securityIndicator
+inner node is equal to =========== ns1:txStatus
+inner node is equal to =========== ns1:xid
+inner node is equal to =========== ns1:threeD
+inner node is equal to =========== ns1:checkAVS
+inner node is equal to =========== ns1:ignoreCSCCheckResult
+inner node is equal to =========== ns1:ignorePostcodeCheckResult
+inner node is equal to =========== ns1:ignoreAddressCheckResult
+inner node is equal to =========== ns1:automaticReverse
+inner node is equal to =========== ns1:cardAuthPolicy
+inner node is equal to =========== ns1:check3DS
+inner node is equal to =========== ns1:checkCSC
+inner node is equal to =========== ns1:issuerWalletAuthPolicy
+
+
+<ns1:threeD>
+<!-- optional -->
+            <ns1:cavv>?XXX?</ns1:cavv>
+<!-- optional -->
+            <ns1:cavvAlgorithm>?XXX?</ns1:cavvAlgorithm>
+<!-- optional -->
+            <ns1:eci>?XXX?</ns1:eci>
+<!-- optional -->
+            <ns1:securityIndicator>?XXX?</ns1:securityIndicator>
+<!-- optional -->
+            <ns1:txStatus>?XXX?</ns1:txStatus>
+<!-- optional -->
+            <ns1:xid>?XXX?</ns1:xid>
+          </ns1:threeD>
+<!-- optional -->
+          <ns1:cardAuthPolicy>
+<!-- optional -->
+            <ns1:checkAVS>?true?</ns1:checkAVS>
+<!-- optional -->
+            <ns1:ignoreCSCCheckResult>?true?</ns1:ignoreCSCCheckResult>
+<!-- optional -->
+            <ns1:ignorePostcodeCheckResult>?true?</ns1:ignorePostcodeCheckResult>
+<!-- optional -->
+            <ns1:ignoreAddressCheckResult>?true?</ns1:ignoreAddressCheckResult>
+<!-- optional -->
+            <ns1:automaticReverse>?true?</ns1:automaticReverse>
+          </ns1:cardAuthPolicy>
+<!-- optional -->
+          <ns1:issuerWalletAuthPolicy>
+<!-- optional -->
+            <ns1:check3DS>?XXX?</ns1:check3DS>
+<!-- optional -->
+            <ns1:checkCSC>?XXX?</ns1:checkCSC>
+          </ns1:issuerWalletAuthPolicy>
+        </ns1:authenticationData>

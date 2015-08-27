@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.glassfish:javax.annotation:3.1-b35">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/glassfish/javax.annotation/3.1-b35/javax.annotation-3.1-b35.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/glassfish/javax.annotation/3.1-b35/javax.annotation-3.1-b35-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/glassfish/javax.annotation/3.1-b35/javax.annotation-3.1-b35-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
