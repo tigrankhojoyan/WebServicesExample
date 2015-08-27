@@ -66,8 +66,8 @@ public class HelloWorldWSTest {
         // Send SOAP Message to SOAP Server
         String url = "http://localhost:8081/hello";
         //WSDLUtil.createRequestTemplate("http://localhost:8081/hello?wsdl", null, null); file:///C:/Users/tigrank/Desktop/PagesWSDL/page.xml
-        SOAPMessage soapRequestBody = WSDLUtil.createRequestTemplate("http://localhost:8081/hello?wsdl", null, null);
-        List<GenericInput> genericInputs = WSDLUtil.getSpecifiedClassFields(soapRequestBody, "ns1:updateData");
+        SOAPMessage soapRequestBody = WSDLUtil.createRequestTemplate("http://localhost:8081/hello?wsdl", "updateData");
+        List<GenericInput> genericInputs = WSDLUtil.getSpecifiedClassFields(soapRequestBody, "updateData", "http://localhost:8081/hello?wsdl");
         HtmlGenerator htmlGenerator = HtmlGenerator.getInstance();
         htmlGenerator.setGenericInputs(genericInputs);
         Map<String, String> htmlFormMap = htmlGenerator.generateEntireHTMLForms();

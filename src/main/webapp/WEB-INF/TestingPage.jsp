@@ -30,9 +30,9 @@
 
 <%
     HtmlGenerator htmlGenerator = HtmlGenerator.getInstance();
-    SOAPMessage soapRequestBody = WSDLUtil.createRequestTemplate("http://localhost:8081/hello?wsdl", null, null);
+    SOAPMessage soapRequestBody = WSDLUtil.createRequestTemplate("file:///C:/Users/tigrank/Desktop/PagesWSDL/page.xml", "cardOrder");
     htmlGenerator.setSoapRequest(soapRequestBody);
-    List<GenericInput> genericInputs = WSDLUtil.getSpecifiedClassFields(soapRequestBody, "updateData");
+    List<GenericInput> genericInputs = WSDLUtil.getSpecifiedClassFields(soapRequestBody, "cardOrder", "file:///C:/Users/tigrank/Desktop/PagesWSDL/page.xml");
     htmlGenerator.setGenericInputs(genericInputs);
     htmlGenerator.initializeTitle();
     Map<String, String> htmlFormMap = htmlGenerator.generateEntireHTMLForms();

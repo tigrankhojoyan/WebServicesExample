@@ -44,15 +44,15 @@ public class HtmlGenerator {
 
     public static String generateHTMLForGivenGenericList(String htmlTitle) {
         String htmlStringWithoutSelector = " <p>\n" +
-                "%s                    <input name=\"%s.%s\"\n" +
-                "                           id=\"%s.%s\" type=\"text\"\n" +
+                "%s                    <input name=\"%s\"\n" +
+                "                           id=\"%s\" type=\"text\"\n" +
                 "                           value=\"%s\"/>\n" +
                 "                </p>";
         String htmlFormFields = "";
         for(GenericInput genericInput:genericInputs) {
             if(genericInput.getHtmlTitle().equals(htmlTitle)) {
-                String htmlBody =  String.format(htmlStringWithoutSelector, genericInput.getFieldName(), genericInput.getClassName(), genericInput.getFieldName(),
-                        genericInput.getClassName(), genericInput.getFieldName(), genericInput.getValue());
+                String htmlBody =  String.format(htmlStringWithoutSelector, genericInput.getFieldName(), genericInput.getxPath(),
+                        genericInput.getxPath(), genericInput.getValue());
                 htmlFormFields += htmlBody;
             }
         }
@@ -72,7 +72,7 @@ public class HtmlGenerator {
  /*       System.out.println("formBody=========\n");
         WSDLUtil.printMap(formBodyByTitles);
         System.out.println("kkkkkkkkkkkkkk");*/
-        System.out.println("formBodyTitle========" + formBodyByTitles);
+        //System.out.println("formBodyTitle========" + formBodyByTitles);
         return formBodyByTitles;
     }
 

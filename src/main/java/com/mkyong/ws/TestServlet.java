@@ -33,7 +33,6 @@ public class TestServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            Multimap<String, String> stringMultimap = ArrayListMultimap.create();
             HashMap<String, String> requestParams = new HashMap<String, String>();
             SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
             SOAPConnection soapConnection = soapConnectionFactory.createConnection();

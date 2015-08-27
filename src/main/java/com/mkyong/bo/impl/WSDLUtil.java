@@ -100,8 +100,7 @@ public final class WSDLUtil {
                         creator.createRequest(port.getName(), op.getName(), binding.getName());
                         System.out.println("44444444");
                         String requestBody = writer.toString();
-                        SOAPMessage requestMessage = parseSoapRequest("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + requestBody,
-                                null, null);
+                        SOAPMessage requestMessage = parseSoapRequest("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + requestBody);
                         System.out.println(requestBody);
                         return requestMessage;
                     }
@@ -112,7 +111,7 @@ public final class WSDLUtil {
         return null;
     }
 
-    public static SOAPMessage createRequestTemplate(String url, List<String> keys, List<String> values) throws Exception {
+    public static SOAPMessage createRequestTemplate(String url, String operationName) throws Exception {
         WSDLParser parser = new WSDLParser();
         Definitions wsdl = parser.parse(url);
         StringWriter writer = new StringWriter();
@@ -127,12 +126,12 @@ public final class WSDLUtil {
                 for (Operation op : portType.getOperations()) {
                     RequestTemplateCreator templateCreator = new RequestTemplateCreator();
                     System.out.println("name==============" + op.getName());
-                    if (op.getName().equals("updateData")) {
+                    if (op.getName().equals(operationName)) {
                         creator.setCreator(templateCreator);
                         System.out.println("creator==========" + creator.getCreator().toString());
                         creator.createRequest(port.getName(), op.getName(), binding.getName());
                         String requestBody = writer.toString();
-                        SOAPMessage requestMessage = parseSoapRequest("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + requestBody, keys, values);
+                        SOAPMessage requestMessage = parseSoapRequest("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + requestBody);
                         System.out.println(requestBody);
                         return requestMessage;
                     }
@@ -176,7 +175,7 @@ public final class WSDLUtil {
         return soapMessage;
     }
 
-    public static SOAPMessage parseSoapRequest(String xmlString, List<String> fields, List<String> values) throws SOAPException, IOException {
+    public static SOAPMessage parseSoapRequest(String xmlString) throws SOAPException, IOException {
         MessageFactory factory = MessageFactory.newInstance();
         SOAPMessage message = factory.createMessage(
                 new MimeHeaders(),
@@ -187,12 +186,12 @@ public final class WSDLUtil {
         for (int i = 0; i < list.getLength(); i++) {
             System.out.println("node name ============" + list.item(i).getNodeName());
         }
-
         return message;
     }
 
     public static void getInnerFields(Node node, String className, List<GenericInput> genericInputs, String xPath,
                                       HashMap<String, Boolean> fieldsMandatoryList) {
+        String xPathClass = className.substring(4, className.length());
         System.out.println("inner main node ==== " + node.getNodeName());
         NodeList nodeList = node.getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -200,7 +199,8 @@ public final class WSDLUtil {
             if(node1.getNodeName().substring(0,1).equals("#"))
                 continue;
             if(node1.getChildNodes().getLength() > 1) {
-                xPath = xPath + "/" + className;
+                if(!xPath.contains(xPathClass))
+                    xPath = xPath + "/" + xPathClass;
                 getInnerFields(node1, className, genericInputs, xPath, fieldsMandatoryList);
             } else {
                 Boolean isMandatory = true;
@@ -209,7 +209,9 @@ public final class WSDLUtil {
                 }
                 GenericInput genericInput = new GenericInput(className, node1.getNodeName(), node.getNodeName(),
                 isMandatory, "innerExample");
-                genericInput.setxPath(xPath + "/" + node1.getNodeName());
+                xPathClass = node1.getNodeName().substring(4, node1.getNodeName().length());
+                if(!xPath.contains(xPathClass))
+                    genericInput.setxPath(xPath + "/" + xPathClass);
                 genericInputs.add(genericInput);
             }
             System.out.println("given node name======" + node.getNodeName());
@@ -217,10 +219,10 @@ public final class WSDLUtil {
         }
     }
 
-    public static List<GenericInput> getSpecifiedClassFields(SOAPMessage requestBody, String className) throws Exception {
+    public static List<GenericInput> getSpecifiedClassFields(SOAPMessage requestBody, String operationName, String wsdlURL) throws Exception {
         List<GenericInput> genericInputs = new ArrayList<GenericInput>();
-        HashMap<String, Boolean> fieldsMandatoryList = WSDLUtil.getElemntsOfSpecifiedClass("data",
-                "http://localhost:8081/hello?wsdl");
+        HashMap<String, Boolean> fieldsMandatoryList = WSDLUtil.getElementsOfSpecifiedClass("cardOrderInput",
+                wsdlURL);
         System.out.println("tttttttttttttttttttttttt");
         printMap(fieldsMandatoryList);
         System.out.println("tttttttttttttttttttttttt");
@@ -228,17 +230,19 @@ public final class WSDLUtil {
         NodeList nodeList = body.getChildNodes();
         for(int i = 0; i < nodeList.getLength(); i++) {
             org.w3c.dom.Node node = nodeList.item(i);
-            if(node.getNodeName().equals("ns1:" + className)) {
+            if(node.getNodeName().equals("ns1:" + operationName)) {
                 NodeList nodeList1 = node.getChildNodes();
                 for(int j = 0; j < nodeList1.getLength(); j++) {
                     Node node1 = nodeList1.item(j);
-                    if(node1.getNodeName().equals("arg0")) {
+                    if(node1.getNodeName().equals("ns1:input")) {//"arg0"
                         NodeList nodeList2 = node1.getChildNodes();
                         for (int i1 = 0; i1 < nodeList2.getLength(); i1++) {
                             Node node2 = nodeList2.item(i1);
                             if(node2.getNodeName().substring(0,1).equals("#"))
                                 continue;
-                            String xPath = "xpath:/" + className + "/arg0/" + node2.getNodeName();
+                            //String xPath = "xpath:/" + operationName + "/input/" + node2.getNodeName();
+                            String xPathClass = node2.getNodeName();
+                            String xPath =  xPathClass.substring(4, xPathClass.length());
                             if(node2.getChildNodes().getLength() > 1) {
                                 getInnerFields(node2, node2.getNodeName(), genericInputs, xPath, fieldsMandatoryList);
                             } else {
@@ -247,7 +251,7 @@ public final class WSDLUtil {
                                     isMandatory = fieldsMandatoryList.get(node2.getNodeName());
                                 }
                                 System.out.println("nodeName=======" + node2.getNodeName());
-                                GenericInput genericInput = new GenericInput(className, node2.getNodeName(), "Basic",
+                                GenericInput genericInput = new GenericInput(operationName, node2.getNodeName(), "Basic",
                                         isMandatory, "example");
                                 genericInput.setxPath(xPath);
                                 genericInputs.add(genericInput);
@@ -263,9 +267,9 @@ public final class WSDLUtil {
     }
 
     public static String returnStringFromHashMap(Map<String, String> hashMap) {
-        System.out.println("=========================");
+        /*System.out.println("=========================");
         printMap(hashMap);
-        System.out.println("=========================");
+        System.out.println("=========================");*/
         String returningValue = "";
         Iterator it = hashMap.entrySet().iterator();
         while (it.hasNext()) {
@@ -279,14 +283,11 @@ public final class WSDLUtil {
 
     public static NodeList getElementsOfTheSpecifiedClass(String typeName, String wsdlURL) throws Exception {
         WSDLParser parser = new WSDLParser();
-        System.out.println("1111111111");
         Definitions defs = parser
                 .parse(wsdlURL);
-        System.out.println("22222222222");
         List<Schema> schemas = defs.getSchemas();
-        System.out.println("33333333333");
         System.out.println("SchemaLength=========" + schemas.size());
-        Schema schema = schemas.get(1);
+        Schema schema = schemas.get(0);
         ComplexType type = schema.getComplexType(typeName);
         Document document = loadXMLFromString(type.getAsString());
         NodeList list = document.getElementsByTagName("xsd:element");
@@ -304,7 +305,7 @@ public final class WSDLUtil {
         return builder.parse(is);
     }
 
-    public static HashMap<String, Boolean> getElemntsOfSpecifiedClass(String className, String wsdlURL) throws Exception {
+    public static HashMap<String, Boolean> getElementsOfSpecifiedClass(String className, String wsdlURL) throws Exception {
         HashMap<String, Boolean> elementsMandatoryList = new HashMap<String, Boolean>();
         NodeList list = getElementsOfTheSpecifiedClass(className, wsdlURL);
         for (int i = 0; i < list.getLength(); i++) {
@@ -315,7 +316,7 @@ public final class WSDLUtil {
             if(mandatoryValue.equals("0")) {
                 isMandatory = false;
             }
-            elementsMandatoryList.put(name, isMandatory);
+            elementsMandatoryList.put("ns1:" + name, isMandatory);
         }
         return elementsMandatoryList;
     }
