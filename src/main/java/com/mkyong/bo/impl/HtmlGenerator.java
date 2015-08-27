@@ -1,9 +1,7 @@
 package com.mkyong.bo.impl;
 
 import javax.xml.soap.SOAPMessage;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by tigrank on 8/25/2015.
@@ -46,14 +44,14 @@ public class HtmlGenerator {
 
     public static String generateHTMLForGivenGenericList(String htmlTitle) {
         String htmlStringWithoutSelector = " <p>\n" +
-                "                    <input name=\"%s.%s\"\n" +
+                "%s                    <input name=\"%s.%s\"\n" +
                 "                           id=\"%s.%s\" type=\"text\"\n" +
                 "                           value=\"%s\"/>\n" +
                 "                </p>";
         String htmlFormFields = "";
         for(GenericInput genericInput:genericInputs) {
             if(genericInput.getHtmlTitle().equals(htmlTitle)) {
-                String htmlBody = String.format(htmlStringWithoutSelector, genericInput.getClassName(), genericInput.getFieldName(),
+                String htmlBody =  String.format(htmlStringWithoutSelector, genericInput.getFieldName(), genericInput.getClassName(), genericInput.getFieldName(),
                         genericInput.getClassName(), genericInput.getFieldName(), genericInput.getValue());
                 htmlFormFields += htmlBody;
             }
@@ -61,9 +59,14 @@ public class HtmlGenerator {
         return htmlFormFields;
     }
 
-    public static HashMap<String, String> generateEntireHTMLForms() {
-        HashMap<String, String> formBodyByTitles = new HashMap<String, String>();
+    public static Map<String, String> generateEntireHTMLForms() {
+        Map<String, String> formBodyByTitles = new HashMap<String, String>();
+        List<String> drownTitles = new ArrayList<String>();
         for(String title : titles) {
+           /* if(! drownTitles.contains(title))  {
+                drownTitles.add(title);*/
+                //formBodyByTitles.put("The" + title, "<h1>" + title + "</h1>");
+            //}
             formBodyByTitles.put(title, generateHTMLForGivenGenericList(title));
         }
  /*       System.out.println("formBody=========\n");

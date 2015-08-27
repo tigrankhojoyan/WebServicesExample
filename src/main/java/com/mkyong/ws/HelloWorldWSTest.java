@@ -18,6 +18,7 @@ import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by tigrank on 8/24/2015.
@@ -69,7 +70,7 @@ public class HelloWorldWSTest {
         List<GenericInput> genericInputs = WSDLUtil.getSpecifiedClassFields(soapRequestBody, "ns1:updateData");
         HtmlGenerator htmlGenerator = HtmlGenerator.getInstance();
         htmlGenerator.setGenericInputs(genericInputs);
-        HashMap<String, String> htmlFormMap = htmlGenerator.generateEntireHTMLForms();
+        Map<String, String> htmlFormMap = htmlGenerator.generateEntireHTMLForms();
 
         WSDLUtil.printMap(htmlFormMap);
         /*SOAPMessage soapResponse = soapConnection.call(soapRequestBody, url);

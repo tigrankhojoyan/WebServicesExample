@@ -1,5 +1,7 @@
 package com.mkyong.bo.impl;
 
+import com.predic8.schema.ComplexType;
+import com.predic8.schema.Schema;
 import com.predic8.wsdl.*;
 import com.predic8.wstool.creator.RequestCreator;
 import com.predic8.wstool.creator.RequestTemplateCreator;
@@ -7,10 +9,14 @@ import com.predic8.wstool.creator.SOARequestCreator;
 import groovy.xml.MarkupBuilder;
 import org.w3c.dom.*;
 import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.soap.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
@@ -44,12 +50,14 @@ public final class WSDLUtil {
     }
 
     public static void printMap(Map mp) {
-        Iterator it = mp.entrySet().iterator();
+        for(Object key: mp.keySet())
+            System.out.println(key + " - " + mp.get(key));
+        /*Iterator it = mp.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
             System.out.println(pair.getKey() + " = " + pair.getValue());
             it.remove(); // avoids a ConcurrentModificationException
-        }
+        }*/
     }
 
     public static <T> HashMap<String, String> getObjectKeyValues(T object) throws NoSuchFieldException, IllegalAccessException {
@@ -86,6 +94,9 @@ public final class WSDLUtil {
                     if (op.getName().equals(className)) {
                         //creator.setCreator(templateCreator);
                         System.out.println("333333333");
+                        System.out.println("portName=======" + port.getName());
+                        System.out.println("operationName=======" + op.getName());
+                        System.out.println("bindingName=======" + binding.getName());
                         creator.createRequest(port.getName(), op.getName(), binding.getName());
                         System.out.println("44444444");
                         String requestBody = writer.toString();
@@ -180,7 +191,8 @@ public final class WSDLUtil {
         return message;
     }
 
-    public static void getInnerFields(Node node, String className, List<GenericInput> genericInputs, String xPath) {
+    public static void getInnerFields(Node node, String className, List<GenericInput> genericInputs, String xPath,
+                                      HashMap<String, Boolean> fieldsMandatoryList) {
         System.out.println("inner main node ==== " + node.getNodeName());
         NodeList nodeList = node.getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -189,10 +201,14 @@ public final class WSDLUtil {
                 continue;
             if(node1.getChildNodes().getLength() > 1) {
                 xPath = xPath + "/" + className;
-                getInnerFields(node1, className, genericInputs, xPath);
+                getInnerFields(node1, className, genericInputs, xPath, fieldsMandatoryList);
             } else {
+                Boolean isMandatory = true;
+                if(fieldsMandatoryList.containsKey(node.getNodeName())) {
+                    isMandatory = fieldsMandatoryList.get(node.getNodeName());
+                }
                 GenericInput genericInput = new GenericInput(className, node1.getNodeName(), node.getNodeName(),
-                true, "innerExample");
+                isMandatory, "innerExample");
                 genericInput.setxPath(xPath + "/" + node1.getNodeName());
                 genericInputs.add(genericInput);
             }
@@ -201,8 +217,13 @@ public final class WSDLUtil {
         }
     }
 
-    public static List<GenericInput> getSpecifiedClassFields(SOAPMessage requestBody, String className) throws SOAPException {
+    public static List<GenericInput> getSpecifiedClassFields(SOAPMessage requestBody, String className) throws Exception {
         List<GenericInput> genericInputs = new ArrayList<GenericInput>();
+        HashMap<String, Boolean> fieldsMandatoryList = WSDLUtil.getElemntsOfSpecifiedClass("data",
+                "http://localhost:8081/hello?wsdl");
+        System.out.println("tttttttttttttttttttttttt");
+        printMap(fieldsMandatoryList);
+        System.out.println("tttttttttttttttttttttttt");
         SOAPBody body = requestBody.getSOAPBody();
         NodeList nodeList = body.getChildNodes();
         for(int i = 0; i < nodeList.getLength(); i++) {
@@ -219,11 +240,15 @@ public final class WSDLUtil {
                                 continue;
                             String xPath = "xpath:/" + className + "/arg0/" + node2.getNodeName();
                             if(node2.getChildNodes().getLength() > 1) {
-                                getInnerFields(node2, node2.getNodeName(), genericInputs, xPath);
+                                getInnerFields(node2, node2.getNodeName(), genericInputs, xPath, fieldsMandatoryList);
                             } else {
+                                Boolean isMandatory = true;
+                                if(fieldsMandatoryList.containsKey(node2.getNodeName())) {
+                                    isMandatory = fieldsMandatoryList.get(node2.getNodeName());
+                                }
                                 System.out.println("nodeName=======" + node2.getNodeName());
                                 GenericInput genericInput = new GenericInput(className, node2.getNodeName(), "Basic",
-                                true, "example");
+                                        isMandatory, "example");
                                 genericInput.setxPath(xPath);
                                 genericInputs.add(genericInput);
                             }
@@ -237,15 +262,62 @@ public final class WSDLUtil {
         return genericInputs;
     }
 
-    public static String returnStringFromHashMap(HashMap<String, String> hashMap) {
+    public static String returnStringFromHashMap(Map<String, String> hashMap) {
+        System.out.println("=========================");
+        printMap(hashMap);
+        System.out.println("=========================");
         String returningValue = "";
         Iterator it = hashMap.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
-            returningValue += pair.getValue();
+            String key = (String) pair.getKey();
+            returningValue += "<h1>" + key + "</h1>" + pair.getValue();
             it.remove(); // avoids a ConcurrentModificationException
         }
         return returningValue;
+    }
+
+    public static NodeList getElementsOfTheSpecifiedClass(String typeName, String wsdlURL) throws Exception {
+        WSDLParser parser = new WSDLParser();
+        System.out.println("1111111111");
+        Definitions defs = parser
+                .parse(wsdlURL);
+        System.out.println("22222222222");
+        List<Schema> schemas = defs.getSchemas();
+        System.out.println("33333333333");
+        System.out.println("SchemaLength=========" + schemas.size());
+        Schema schema = schemas.get(1);
+        ComplexType type = schema.getComplexType(typeName);
+        Document document = loadXMLFromString(type.getAsString());
+        NodeList list = document.getElementsByTagName("xsd:element");
+        return list;
+    }
+
+    public static Document loadXMLFromString(String xml) throws Exception {
+        String xmlString = "<?xml version=\"1.0\" encoding=\"utf-8\"?> \n" +
+                "<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"> \n" +
+                xml + "</xs:schema> ";
+        System.out.println(xmlString);
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        InputSource is = new InputSource(new StringReader(xmlString));
+        return builder.parse(is);
+    }
+
+    public static HashMap<String, Boolean> getElemntsOfSpecifiedClass(String className, String wsdlURL) throws Exception {
+        HashMap<String, Boolean> elementsMandatoryList = new HashMap<String, Boolean>();
+        NodeList list = getElementsOfTheSpecifiedClass(className, wsdlURL);
+        for (int i = 0; i < list.getLength(); i++) {
+            Element element = (Element) list.item(i);
+            String name = element.getAttribute("name");
+            Boolean isMandatory = true;
+            String mandatoryValue = element.getAttribute("minOccurs");
+            if(mandatoryValue.equals("0")) {
+                isMandatory = false;
+            }
+            elementsMandatoryList.put(name, isMandatory);
+        }
+        return elementsMandatoryList;
     }
 
     /*public static List<GenericInput> getSpecifiedClassFields(SOAPMessage requestBody, String className) throws SOAPException {
@@ -284,4 +356,6 @@ public final class WSDLUtil {
         }
         return null;
     }*/
+
+
 }

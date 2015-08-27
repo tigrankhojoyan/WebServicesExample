@@ -7,6 +7,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.mkyong.bo.impl.HtmlGenerator" %>
 <%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.Map" %>
 <%--
   Created by IntelliJ IDEA.
   User: tigrank
@@ -17,29 +18,38 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title></title>
+    <title>Client page</title>
+    <script>
+        function showSoapRequest() {
+            document.getElementById("soapBody").display = "block";
+        }
+    </script>
 </head>
+
 <body>
 
 <%
     HtmlGenerator htmlGenerator = HtmlGenerator.getInstance();
-    SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
-    SOAPConnection soapConnection = soapConnectionFactory.createConnection();
-    String url = "http://localhost:8081/hello";
     SOAPMessage soapRequestBody = WSDLUtil.createRequestTemplate("http://localhost:8081/hello?wsdl", null, null);
     htmlGenerator.setSoapRequest(soapRequestBody);
     List<GenericInput> genericInputs = WSDLUtil.getSpecifiedClassFields(soapRequestBody, "updateData");
     htmlGenerator.setGenericInputs(genericInputs);
     htmlGenerator.initializeTitle();
-    HashMap<String, String> htmlFormMap = htmlGenerator.generateEntireHTMLForms();
+    Map<String, String> htmlFormMap = htmlGenerator.generateEntireHTMLForms();
 %>
 
 <form id="kiwForm" action="/anyLocation" method="post">
 
     <%=WSDLUtil.returnStringFromHashMap(htmlFormMap) %>
     <input type="submit" name="submit" id="submit" value="submit"/>
-
+    <button onclick="showSoapRequest()">Show Soap</button>
 </form>
+
+<div id="soapBody" style="display: none">
+    <textarea name="soapRequestBody" id="soapRequestBody" cols="50" rows="5">
+    </textarea>
+
+</div>
 
 </body>
 </html>

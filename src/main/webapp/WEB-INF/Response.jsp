@@ -19,7 +19,6 @@
 <%
   HtmlGenerator htmlGenerator = HtmlGenerator.getInstance();
   SOAPMessage responseBody = htmlGenerator.getSoapResponse();
-  SOAPBody body = responseBody.getSOAPBody();
   ByteArrayOutputStream stream = new ByteArrayOutputStream();
   responseBody.writeTo(stream);
   String stringResponse = new String(stream.toByteArray(), "utf-8");
