@@ -1,31 +1,39 @@
-package com.mkyong.bo.impl;
+package com.mkyong.sims;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by tigrank on 8/25/2015.
+ * Created by tigrank on 8/31/2015.
  */
-public class GenericInput {
+public class GenericInputList {
 
     private String className;
     private String fieldName;
-    private String htmlTitle;
     private boolean isMandatory;
     private String value;
     private String xPath;
+    private boolean isList;
     private List<String> suggestedValues;
+    private List<GenericInputList> childGenericInputs;
 
-    public GenericInput() {
+    public GenericInputList() {
+        childGenericInputs = new ArrayList<GenericInputList>();
 
     }
 
-    public GenericInput(String className, String fieldName, String htmlTitle,
-                        boolean isMandatory, String value) {
-        this.className = className;
+    public GenericInputList(String xPath, String fieldName, Boolean isList,
+                            boolean isMandatory, String value) {
+        this.xPath = xPath;
         this.fieldName = fieldName;
-        this.htmlTitle = htmlTitle;
         this.isMandatory = isMandatory;
         this.value = value;
+        this.isList = isList;
+        childGenericInputs = new ArrayList<GenericInputList>();
+    }
+
+    public void addGenericInputIntoInnerList(GenericInputList genericInput) {
+        childGenericInputs.add(genericInput);
     }
 
     public String getClassName() {
@@ -42,14 +50,6 @@ public class GenericInput {
 
     public void setFieldName(String fieldName) {
         this.fieldName = fieldName;
-    }
-
-    public String getHtmlTitle() {
-        return htmlTitle;
-    }
-
-    public void setHtmlTitle(String htmlTitle) {
-        this.htmlTitle = htmlTitle;
     }
 
     public boolean isMandatory() {
@@ -84,15 +84,32 @@ public class GenericInput {
         this.suggestedValues = suggestedValues;
     }
 
+    public List<GenericInputList> getChildGenericInputs() {
+        return childGenericInputs;
+    }
+
+    public void setChildGenericInputs(List<GenericInputList> childGenericInputs) {
+        this.childGenericInputs = childGenericInputs;
+    }
+
+    public boolean isList() {
+        return isList;
+    }
+
+    public void setIsList(boolean isList) {
+        this.isList = isList;
+    }
+
     @Override
     public String toString() {
         return "{" +
                 "\"className\":\"" + className +
                 "\", \"fieldName\":\"" + fieldName +
-                "\", \"suggestedValues\":\"" + suggestedValues.toString() +
-                "\", \"htmlTitle\":\"" + htmlTitle +
-                "\", \"isMandatory\":\"" + isMandatory +
+                "\", \"suggestedValues\":\"" + suggestedValues +
+                "\",  \"isMandatory\":\"" + isMandatory +
                 "\", \"value\":\"" + value + "\", \"xPath\":\"" +
-                xPath + "\"" + '}';
+                xPath + "\", \"childGenericInputs\":" + childGenericInputs +
+                ", \"isList\":\"" + isList + "\"" + '}';
     }
+
 }

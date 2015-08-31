@@ -1,6 +1,3 @@
-<%@ page import="com.mkyong.bo.impl.Data" %>
-<%@ page import="javax.xml.soap.SOAPConnectionFactory" %>
-<%@ page import="javax.xml.soap.SOAPConnection" %>
 <%@ page import="javax.xml.soap.SOAPMessage" %>
 <%@ page import="com.mkyong.bo.impl.WSDLUtil" %>
 <%@ page import="com.mkyong.bo.impl.GenericInput" %>
@@ -29,12 +26,29 @@
 <body>
 
 <%
-    HtmlGenerator htmlGenerator = HtmlGenerator.getInstance();
+    HashMap<String, String> defaultValues = new HashMap<String, String>();
+    defaultValues.put("amount", "50");
+    defaultValues.put("captureDay", "0");
+    defaultValues.put("cardCSCValue", "100");
+    defaultValues.put("cardExpiryDate", "201604");
+    defaultValues.put("cardNumber", "4907000000000600");
+    defaultValues.put("currencyCode", "978");
+    defaultValues.put("customerId", "customerId1");
+    defaultValues.put("customerIpAddress", "127.0.0.1");
+    defaultValues.put("merchantId", "023101122334455");
+    defaultValues.put("orderChannel", "INTERNET");
+    defaultValues.put("orderId", "123");
+    defaultValues.put("returnContext", "mon context de retour");
+    defaultValues.put("transactionReference", "SIM201508289239");
+    defaultValues.put("transactionOrigin", "SIPS-SIMS");
+    defaultValues.put("interfaceVersion", "IR_WS_2.9");
+    HtmlGenerator htmlGenerator = new HtmlGenerator();
     SOAPMessage soapRequestBody = WSDLUtil.createRequestTemplate("file:///C:/Users/tigrank/Desktop/PagesWSDL/page.xml", "cardOrder");
     htmlGenerator.setSoapRequest(soapRequestBody);
     List<GenericInput> genericInputs = WSDLUtil.getSpecifiedClassFields(soapRequestBody, "cardOrder", "file:///C:/Users/tigrank/Desktop/PagesWSDL/page.xml");
     htmlGenerator.setGenericInputs(genericInputs);
     htmlGenerator.initializeTitle();
+    htmlGenerator.setValuesOfGenericInput(defaultValues);
     Map<String, String> htmlFormMap = htmlGenerator.generateEntireHTMLForms();
 %>
 

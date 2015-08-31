@@ -17,7 +17,7 @@
 </head>
 <body>
 <%
-  HtmlGenerator htmlGenerator = HtmlGenerator.getInstance();
+  HtmlGenerator htmlGenerator = new HtmlGenerator();
   SOAPMessage responseBody = htmlGenerator.getSoapResponse();
   ByteArrayOutputStream stream = new ByteArrayOutputStream();
   responseBody.writeTo(stream);

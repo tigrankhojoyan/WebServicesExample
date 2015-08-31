@@ -19,6 +19,16 @@
     </servlet-mapping>
 
 	<servlet>
+		<servlet-name>CreditTransferFinalizeAndOrder.jsp</servlet-name>
+		<jsp-file>/WEB-INF/CreditTransferFinalizeAndOrder.jsp</jsp-file>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>CreditTransferFinalizeAndOrder.jsp</servlet-name>
+		<url-pattern>/CreditTransferFinalizeAndOrder.htm</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>TestingPage.jsp</servlet-name>
 		<jsp-file>/WEB-INF/TestingPage.jsp</jsp-file>
 	</servlet>

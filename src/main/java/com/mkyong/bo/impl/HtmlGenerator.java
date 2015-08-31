@@ -8,26 +8,19 @@ import java.util.*;
  */
 public class HtmlGenerator {
 
-    private static HtmlGenerator instance = null;
-    private static List<GenericInput> genericInputs = null;
-    private static List<String> titles = new ArrayList<String>();
-    private static SOAPMessage soapRequest = null;
-    private static SOAPMessage soapResponse = null;
 
-    private HtmlGenerator() {
+    private  List<GenericInput> genericInputs = null;
+    private  List<String> titles = new ArrayList<String>();
+    private  SOAPMessage soapRequest = null;
+    private  SOAPMessage soapResponse = null;
+
+    public HtmlGenerator() {
 
     }
 
-    public static HtmlGenerator getInstance() {
-        if(null == instance) {
-            instance = new HtmlGenerator();
-        }
-        return instance;
-    }
-
-    public static void initializeTitle() {
-        for(GenericInput genericInput: genericInputs) {
-            if(!titles.contains(genericInput.getHtmlTitle())) {
+    public  void initializeTitle() {
+        for (GenericInput genericInput : genericInputs) {
+            if (!titles.contains(genericInput.getHtmlTitle())) {
                 titles.add(genericInput.getHtmlTitle());
             }
         }
@@ -42,16 +35,16 @@ public class HtmlGenerator {
         }
     }*/
 
-    public static String generateHTMLForGivenGenericList(String htmlTitle) {
+    public  String generateHTMLForGivenGenericList(String htmlTitle) {
         String htmlStringWithoutSelector = " <p>\n" +
                 "%s                    <input name=\"%s\"\n" +
                 "                           id=\"%s\" type=\"text\"\n" +
                 "                           value=\"%s\"/>\n" +
                 "                </p>";
         String htmlFormFields = "";
-        for(GenericInput genericInput:genericInputs) {
-            if(genericInput.getHtmlTitle().equals(htmlTitle)) {
-                String htmlBody =  String.format(htmlStringWithoutSelector, genericInput.getFieldName(), genericInput.getxPath(),
+        for (GenericInput genericInput : genericInputs) {
+            if (genericInput.getHtmlTitle().equals(htmlTitle)) {
+                String htmlBody = String.format(htmlStringWithoutSelector, genericInput.getFieldName(), genericInput.getxPath(),
                         genericInput.getxPath(), genericInput.getValue());
                 htmlFormFields += htmlBody;
             }
@@ -59,13 +52,13 @@ public class HtmlGenerator {
         return htmlFormFields;
     }
 
-    public static Map<String, String> generateEntireHTMLForms() {
+    public  Map<String, String> generateEntireHTMLForms() {
         Map<String, String> formBodyByTitles = new HashMap<String, String>();
         List<String> drownTitles = new ArrayList<String>();
-        for(String title : titles) {
+        for (String title : titles) {
            /* if(! drownTitles.contains(title))  {
                 drownTitles.add(title);*/
-                //formBodyByTitles.put("The" + title, "<h1>" + title + "</h1>");
+            //formBodyByTitles.put("The" + title, "<h1>" + title + "</h1>");
             //}
             formBodyByTitles.put(title, generateHTMLForGivenGenericList(title));
         }
@@ -76,35 +69,44 @@ public class HtmlGenerator {
         return formBodyByTitles;
     }
 
-    public static List<GenericInput> getGenericInputs() {
+    public void setValuesOfGenericInput(HashMap<String, String> valuesList) {
+        for (GenericInput genericInput : genericInputs) {
+            String fieldName = genericInput.getFieldName().substring(4, genericInput.getFieldName().length());
+            if (valuesList.containsKey(fieldName)) {
+                genericInput.setValue(valuesList.get(fieldName));
+            }
+        }
+    }
+
+    public List<GenericInput> getGenericInputs() {
         return genericInputs;
     }
 
-    public static void setGenericInputs(List<GenericInput> genericInputs) {
-        instance.genericInputs = genericInputs;
+    public void setGenericInputs(List<GenericInput> genericInputs) {
+        this.genericInputs = genericInputs;
     }
 
-    public static List<String> getTitles() {
+    public List<String> getTitles() {
         return titles;
     }
 
-    public static void setTitles(List<String> titles) {
-        instance.titles = titles;
+    public void setTitles(List<String> titles) {
+        this.titles = titles;
     }
 
-    public static SOAPMessage getSoapRequest() {
+    public SOAPMessage getSoapRequest() {
         return soapRequest;
     }
 
-    public static void setSoapRequest(SOAPMessage soapRequest) {
-        instance.soapRequest = soapRequest;
+    public void setSoapRequest(SOAPMessage soapRequest) {
+        this.soapRequest = soapRequest;
     }
 
-    public static SOAPMessage getSoapResponse() {
+    public SOAPMessage getSoapResponse() {
         return soapResponse;
     }
 
-    public static void setSoapResponse(SOAPMessage soapResponse) {
-        instance.soapResponse = soapResponse;
+    public void setSoapResponse(SOAPMessage soapResponse) {
+        this.soapResponse = soapResponse;
     }
 }

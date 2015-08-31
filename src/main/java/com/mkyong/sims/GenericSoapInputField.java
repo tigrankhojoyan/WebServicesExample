@@ -1,31 +1,28 @@
-package com.mkyong.bo.impl;
+package com.mkyong.sims;
 
 import java.util.List;
 
-/**
- * Created by tigrank on 8/25/2015.
- */
-public class GenericInput {
-
+public class GenericSoapInputField {
     private String className;
     private String fieldName;
-    private String htmlTitle;
     private boolean isMandatory;
     private String value;
     private String xPath;
     private List<String> suggestedValues;
+    private List<GenericSoapInputField> childFields;
+    private String imagePath;
 
-    public GenericInput() {
+    public GenericSoapInputField() {
 
     }
 
-    public GenericInput(String className, String fieldName, String htmlTitle,
-                        boolean isMandatory, String value) {
+    public GenericSoapInputField(String className, String fieldName,
+                                 boolean isMandatory, String value, List<String> suggestedValues) {
         this.className = className;
         this.fieldName = fieldName;
-        this.htmlTitle = htmlTitle;
         this.isMandatory = isMandatory;
         this.value = value;
+        this.suggestedValues = suggestedValues;
     }
 
     public String getClassName() {
@@ -42,14 +39,6 @@ public class GenericInput {
 
     public void setFieldName(String fieldName) {
         this.fieldName = fieldName;
-    }
-
-    public String getHtmlTitle() {
-        return htmlTitle;
-    }
-
-    public void setHtmlTitle(String htmlTitle) {
-        this.htmlTitle = htmlTitle;
     }
 
     public boolean isMandatory() {
@@ -84,15 +73,23 @@ public class GenericInput {
         this.suggestedValues = suggestedValues;
     }
 
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
     @Override
     public String toString() {
         return "{" +
                 "\"className\":\"" + className +
                 "\", \"fieldName\":\"" + fieldName +
-                "\", \"suggestedValues\":\"" + suggestedValues.toString() +
-                "\", \"htmlTitle\":\"" + htmlTitle +
+                "\", \"suggestedValues\":\"" + suggestedValues +
                 "\", \"isMandatory\":\"" + isMandatory +
                 "\", \"value\":\"" + value + "\", \"xPath\":\"" +
-                xPath + "\"" + '}';
+                xPath + "\", \"imagePath\": \"" + imagePath + "\"" + '}';
     }
+
 }

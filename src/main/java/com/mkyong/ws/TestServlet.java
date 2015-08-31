@@ -36,7 +36,7 @@ public class TestServlet extends HttpServlet {
             HashMap<String, String> requestParams = new HashMap<String, String>();
             SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
             SOAPConnection soapConnection = soapConnectionFactory.createConnection();
-            HtmlGenerator htmlGenerator = HtmlGenerator.getInstance();
+            HtmlGenerator htmlGenerator = new HtmlGenerator();
             SOAPMessage soapRequestBody = htmlGenerator.getSoapRequest();
             SOAPBody body = soapRequestBody.getSOAPBody();
             String url = "http://localhost:8081/hello";

@@ -1,21 +1,11 @@
 package com.mkyong.ws;
 
-import com.mkyong.bo.impl.Data;
-import com.mkyong.bo.impl.GenericInput;
-import com.mkyong.bo.impl.HtmlGenerator;
-import com.mkyong.bo.impl.WSDLUtil;
-import com.predic8.schema.restriction.RestrictionUtil;
-import com.predic8.wsdl.*;
-import com.predic8.wstool.creator.RequestTemplateCreator;
-import com.predic8.wstool.creator.SOARequestCreator;
-import groovy.xml.MarkupBuilder;
-import org.w3c.dom.NodeList;
+import com.mkyong.bo.impl.*;
+import com.mkyong.sims.GenericSoapInputField;
+import com.mkyong.sims.OperationsContainer;
+import com.mkyong.sims.SoapUtils;
 
 import javax.xml.soap.*;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +29,15 @@ public class HelloWorldWSTest {
 
     @org.junit.Test
     public void testSetHelloWorldBo() throws Exception {
+
+      /*  OperationsContainer operationsContainer = OperationsContainer.getInstance();
+        HashMap<String, List<GenericSoapInputField>> operationsGenericInputs = operationsContainer.getOperationsGenericInputs();
+        for(String operationName: operationsGenericInputs.keySet()) {
+            System.out.println("Operation name ========" + operationName);
+            System.out.println("Operation generic input ========" + operationsGenericInputs.get(operationName).toString());
+        }*/
+
+        SoapUtils.getOperationFields("file:///C:/Users/tigrank/Desktop/PagesWSDL/page.xml", "cardOrder");
 
     }
 
@@ -68,7 +67,7 @@ public class HelloWorldWSTest {
         //WSDLUtil.createRequestTemplate("http://localhost:8081/hello?wsdl", null, null); file:///C:/Users/tigrank/Desktop/PagesWSDL/page.xml
         SOAPMessage soapRequestBody = WSDLUtil.createRequestTemplate("http://localhost:8081/hello?wsdl", "updateData");
         List<GenericInput> genericInputs = WSDLUtil.getSpecifiedClassFields(soapRequestBody, "updateData", "http://localhost:8081/hello?wsdl");
-        HtmlGenerator htmlGenerator = HtmlGenerator.getInstance();
+        HtmlGenerator htmlGenerator = new HtmlGenerator();
         htmlGenerator.setGenericInputs(genericInputs);
         Map<String, String> htmlFormMap = htmlGenerator.generateEntireHTMLForms();
 
@@ -83,5 +82,7 @@ public class HelloWorldWSTest {
         soapConnection.close();
         //webServiceTemplate.sendSourceAndReceiveToResult("http://localhost:8081/hello",source, result);*/
     }
+
+
 
 }
