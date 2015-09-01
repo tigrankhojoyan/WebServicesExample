@@ -15,8 +15,7 @@ public class OperationsContainer {
     private static HashMap<String, SOAPMessage> soapRequestTemplates = new HashMap<String, SOAPMessage>();
 
     private OperationsContainer() {
-        soapRequestTemplates = SoapUtils.createRequestsTemplates("file:///C:/Users/tigrank/Desktop/PagesWSDL/page.xml");
-        operationsGenericInputs = SoapUtils.getSpecifiedClassFields(soapRequestTemplates, "file:///C:/Users/tigrank/Desktop/PagesWSDL/page.xml");
+
     }
 
     public static OperationsContainer getInstance() {

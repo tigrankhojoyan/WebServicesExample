@@ -1,5 +1,7 @@
 package com.mkyong.sims;
 
+import com.predic8.schema.Element;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,11 +21,22 @@ public class GenericInputList {
 
     public GenericInputList() {
         childGenericInputs = new ArrayList<GenericInputList>();
-
+        suggestedValues = new ArrayList<String>();
     }
 
     public GenericInputList(String xPath, String fieldName, Boolean isList,
                             boolean isMandatory, String value) {
+        this.xPath = xPath;
+        this.fieldName = fieldName;
+        this.isMandatory = isMandatory;
+        this.value = value;
+        this.isList = isList;
+        childGenericInputs = new ArrayList<GenericInputList>();
+        suggestedValues = new ArrayList<String>();
+    }
+
+    public GenericInputList(String className, String fieldName, boolean isMandatory,
+                            String value, String xPath, Boolean isList) {
         this.xPath = xPath;
         this.fieldName = fieldName;
         this.isMandatory = isMandatory;
@@ -35,6 +48,8 @@ public class GenericInputList {
     public void addGenericInputIntoInnerList(GenericInputList genericInput) {
         childGenericInputs.add(genericInput);
     }
+
+
 
     public String getClassName() {
         return className;
