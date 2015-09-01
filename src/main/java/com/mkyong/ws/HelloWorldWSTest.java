@@ -4,6 +4,7 @@ import com.mkyong.bo.impl.*;
 import com.mkyong.sims.*;
 
 import javax.xml.soap.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,15 +36,20 @@ public class HelloWorldWSTest {
             System.out.println("Operation generic input ========" + operationsGenericInputs.get(operationName).toString());
         }*/
 
-        HashMap<String, String> defaultValues = new HashMap<String, String>();
+        /*HashMap<String, String> defaultValues = new HashMap<String, String>();
         defaultValues.put("merchantId", "023101122334455");
         defaultValues.put("interfaceVersion", "IR_WS_2.9");
         defaultValues.put("messageVersion", "0.1");
-        defaultValues.put("transactionReference", "SIM20150828115034");
+        defaultValues.put("transactionReference", "SIM20150828115034");*/
         HashMap<String, GenericInputList> genericInputListHashMap = SoapUtils.getOperationFields("file:///C:/Users/tigrank/Desktop/PagesWSDL/page.xml");
-        GenericInputList genericInput = genericInputListHashMap.get("creditTransferFinalizeAndOrder");
-        SoapUtils.setDefaultValuesOfOperation(genericInput, defaultValues);
+        GenericInputList genericInput = genericInputListHashMap.get("cardOrder");
+        //SoapUtils.setDefaultValuesOfOperation(genericInput, defaultValues);
         System.out.println("genericInput ======== " + genericInput);
+        /*List<String> suggestedValues  = new ArrayList<String>();
+        suggestedValues.add("123");
+        suggestedValues.add("432");
+        suggestedValues.add("43552");
+        genericInput.getChildGenericInputs().get(0).setSuggestedValues(suggestedValues);*/
         String html = SimsHTMLGenerator.generateHTMLFromGenericInput(genericInput);
         System.out.println("html data=============" + html);
     }

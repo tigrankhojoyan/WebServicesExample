@@ -38,7 +38,6 @@ public abstract class SoapUtils {
                                 genericInputLists.addGenericInputIntoInnerList(getInnerComplexTypes(schema, element, schemaComplexTypes, genericInput));
                             } else {
                                 genericInput.setIsList(false);
-                                //genericInput = modifyGenericInputIfDataIsAnonymous(genericInput, element);
                                 genericInputLists.addGenericInputIntoInnerList(genericInput);
                             }
                         }
@@ -79,7 +78,6 @@ public abstract class SoapUtils {
             } else {
                 if (schemaComplexTypes.contains(sequenceElement.getType().getLocalPart())) {
                     GenericInputList genericInputInner = new GenericInputList(xPath + "/" + sequenceElement.getName(), sequenceElement.getName(), false, false, "complexValue");
-                    /*GenericInputList genericInputInner1 = modifyGenericInputIfDataIsAnonymous(new GenericInputList(xPath + "/" + sequenceElement.getName(), sequenceElement.getName(), false, false, "complexValue"), sequenceElement);*/
                     genericInput.addGenericInputIntoInnerList(genericInputInner);
                     getInnerComplexTypes(schema, sequenceElement, schemaComplexTypes, genericInputInner);
                 }
@@ -92,7 +90,6 @@ public abstract class SoapUtils {
                         genericInput.addGenericInputIntoInnerList(genericInputInner);
                     }
                 } else {
-                    //genericInputInner = modifyGenericInputIfDataIsAnonymous(genericInputInner,sequenceElement);
                     genericInput.addGenericInputIntoInnerList(genericInputInner);
                 }
             }
@@ -120,10 +117,6 @@ public abstract class SoapUtils {
     }
 
     public static void modifyGenericInputIfDataIsAnonymous(GenericInputList genericInput, com.predic8.schema.Element element) {
-        System.out.println("In modify function \n field name===========" + genericInput.getFieldName());
-        if(genericInput.getFieldName().equals("riskManagementCustomDataList")) {
-            System.out.println("========in modify function===========");
-        }
         if(genericInput.isList()) {
             ComplexType complexType =(ComplexType)element.getEmbeddedType();
             if(complexType.getSequence().getElements().size() == 1) {
@@ -132,8 +125,6 @@ public abstract class SoapUtils {
                 GenericInputList genericInput1 = new GenericInputList(genericInput.getxPath() + "/" + element1.getName(),
                         element1.getName(), true, isElementMandatory(element1), "modifiedValue");
                 genericInput.addGenericInputIntoInnerList(genericInput1);
-            } else {
-                System.out.println(" the complex type is null ");
             }
         }
     }

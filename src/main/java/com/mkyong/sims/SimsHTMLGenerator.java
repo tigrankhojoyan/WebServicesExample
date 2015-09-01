@@ -24,42 +24,40 @@ public final class SimsHTMLGenerator {
                 "            <fieldset>";
         List<String> complexTypesHTMLs = new ArrayList<String>();
         List<GenericInputList> genericInputList = genericInput.getChildGenericInputs();
-        int complexTypesIndex = 0;
         for (GenericInputList tempGenericInput : genericInputList) {
             if (tempGenericInput.getChildGenericInputs().size() == 0) {
-                htmlForm += generateHTMLFieldForSimpleInput(genericInput);
+                htmlForm += generateHTMLFieldForSimpleInput(tempGenericInput) + "\n";
             } else {
-                List<GenericInputList> complexGenericInputs = tempGenericInput.getChildGenericInputs();
-                for(GenericInputList complexGenericInput: complexGenericInputs) {
-                    String complexTypeHTMLForm = " <div class=\"dropdown\"><a href=\"#\" class=\"dropdown_header\">" +
-                            tempGenericInput.getFieldName() + "</a>\n" + "\n" +
-                            "        <div class=\"dropdown_content\">\n";
-                    String tempComplexHTML = generateHTMLFieldForComplexInput(complexGenericInput, complexTypeHTMLForm, 0);
-                    complexTypesHTMLs.add(tempComplexHTML);
-                }
+                String complexTypeHTMLForm = " <div class=\"dropdown\"><a href=\"#\" class=\"dropdown_header\">" +
+                        tempGenericInput.getFieldName() + "</a>\n" + "\n" +
+                        "        <div class=\"dropdown_content\">\n <fieldset>\n";
+                String tempComplexHTML = generateHTMLFieldForComplexInput(tempGenericInput, complexTypeHTMLForm, 0);
+                tempComplexHTML += "</fieldset> </div></div>";
+                complexTypesHTMLs.add(tempComplexHTML);
             }
         }
-        for(String complexTypeHTML: complexTypesHTMLs) {
+        for (String complexTypeHTML : complexTypesHTMLs) {
             htmlForm += complexTypeHTML;
         }
-        htmlForm += "</fieldset>";
+        htmlForm += "</fieldset></div></div>";
         return htmlForm;
     }
 
     public static String generateHTMLFieldForComplexInput(GenericInputList genericInput, String htmlForm, int counter) {
         List<GenericInputList> genericInputList = genericInput.getChildGenericInputs();
+        System.out.println("the gen input list =======" + genericInputList.toString());
 
-        for(GenericInputList tempGenericInput: genericInputList) {
-            if(tempGenericInput.getChildGenericInputs().size() > 0) {
+        for (GenericInputList tempGenericInput : genericInputList) {
+            if (tempGenericInput.getChildGenericInputs().size() > 0) {
                 counter++;
                 htmlForm += "<fieldset><legend>" + tempGenericInput.getFieldName() + "</legend>";
                 generateHTMLFieldForComplexInput(tempGenericInput, htmlForm, counter);
             }
-            if(counter > 1) {
+            if (counter > 1) {
                 counter = 0;
-                htmlForm +="<fieldset>";
+                htmlForm += "</fieldset> </div> </div>";
             }
-            htmlForm += generateHTMLFieldForSimpleInput(tempGenericInput);
+            htmlForm += generateHTMLFieldForSimpleInput(tempGenericInput) + "\n";
         }
         return htmlForm;
     }
@@ -75,11 +73,11 @@ public final class SimsHTMLGenerator {
         String selectorHTML = String.format(selectorTemplate, genericInput.getFieldName(), genericInput.getxPath(), selectorOptions);
         String fieldForm = String.format(fieldTemplate, genericInput.getFieldName(), genericInput.getFieldName(),
                 genericInput.getxPath(), genericInput.getxPath(), genericInput.getValue());
-        if(selectorOptions.length() > 1) {
-            fieldForm = "<p>"  + fieldForm + "<img src=\"/images/arrow-left-black.png\" class=\"combo_img\" /> " +
-                    selectorHTML + "<p/>";
+        if (selectorOptions.length() > 1) {
+            fieldForm = "<p>" + fieldForm + "<img src=\"/images/arrow-left-black.png\" class=\"combo_img\" /> " +
+                    selectorHTML + "</p>";
         } else {
-            fieldForm = "<p>"  + fieldForm + "</p>";
+            fieldForm = "<p>" + fieldForm + "</p>";
         }
         return fieldForm;
     }
