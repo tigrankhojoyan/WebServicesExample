@@ -36,7 +36,6 @@ public abstract class SoapUtils {
                             if (schemaComplexTypes.contains(element.getType().getLocalPart())) {
                                 genericInputLists.addGenericInputIntoInnerList(getInnerComplexTypes(schema, element, schemaComplexTypes, genericInput));
                             } else {
-                                genericInput.setIsList(false);
                                 genericInputLists.addGenericInputIntoInnerList(genericInput);
                             }
                         }
@@ -71,7 +70,7 @@ public abstract class SoapUtils {
         }
         for (Element sequenceElement : sequence.getElements()) {
             if (sequenceElement.getType() == null) {
-                GenericSoapInputField arrayGenericInput = new GenericSoapInputField(xPath + "/" + sequenceElement.getName(), sequenceElement.getName(), isElementList(element), false, "");
+                GenericSoapInputField arrayGenericInput = new GenericSoapInputField(xPath + "/" + sequenceElement.getName(), sequenceElement.getName(), true, false, "");
                 modifyGenericInputIfDataIsAnonymous(arrayGenericInput, sequenceElement, schema);
                 genericInput.addGenericInputIntoInnerList(arrayGenericInput);
             } else {

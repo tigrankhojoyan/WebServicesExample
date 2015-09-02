@@ -35,7 +35,6 @@ public final class SimsHTMLGenerator {
                 String complexTypeHTMLForm = " <div class=\"dropdown\"><a href=\"#\" class=\"dropdown_header\">" +
                         tempGenericInput.getFieldName() + "</a>\n" + "\n" +
                         "        <div class=\"dropdown_content\">\n <fieldset>\n";
-                List<GenericSoapInputField> genericSoapInputFields = tempGenericInput.getChildGenericInputs();
                 String tempComplexHTML = generateHTMLFieldForComplexInput(tempGenericInput, complexTypeHTMLForm, 0);
                 if(tempGenericInput.isList()) {
                     tempComplexHTML += addItemButton;
@@ -63,6 +62,9 @@ public final class SimsHTMLGenerator {
                         for (GenericSoapInputField temp : tempGenericInnerInput.getChildGenericInputs()) {
                             htmlForm +=generateHTMLFieldForSimpleInput(temp);
                         }
+                    }
+                    if(tempGenericInnerInput.isList()) {
+                        htmlForm += addItemButton;
                     }
                     htmlForm += generateHTMLFieldForSimpleInput(tempGenericInnerInput) + "\n";
                 }
