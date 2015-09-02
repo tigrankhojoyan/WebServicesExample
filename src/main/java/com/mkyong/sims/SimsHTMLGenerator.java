@@ -17,14 +17,14 @@ public final class SimsHTMLGenerator {
             "\t\t\t\t\t</select>";
 
 
-    public static String generateHTMLFromGenericInput(GenericInputList genericInput) {
+    public static String generateHTMLFromGenericInput(GenericSoapInputField genericInput) {
         String htmlForm = " <div class=\"dropdown\"><a href=\"#\" class=\"dropdown_header\">basic data</a>\n" +
                 "\n" +
                 "        <div class=\"dropdown_content\">\n" +
                 "            <fieldset>";
         List<String> complexTypesHTMLs = new ArrayList<String>();
-        List<GenericInputList> genericInputList = genericInput.getChildGenericInputs();
-        for (GenericInputList tempGenericInput : genericInputList) {
+        List<GenericSoapInputField> genericInputList = genericInput.getChildGenericInputs();
+        for (GenericSoapInputField tempGenericInput : genericInputList) {
             if (tempGenericInput.getChildGenericInputs().size() == 0) {
                 htmlForm += generateHTMLFieldForSimpleInput(tempGenericInput) + "\n";
             } else {
@@ -43,11 +43,11 @@ public final class SimsHTMLGenerator {
         return htmlForm;
     }
 
-    public static String generateHTMLFieldForComplexInput(GenericInputList genericInput, String htmlForm, int counter) {
-        List<GenericInputList> genericInputList = genericInput.getChildGenericInputs();
+    public static String generateHTMLFieldForComplexInput(GenericSoapInputField genericInput, String htmlForm, int counter) {
+        List<GenericSoapInputField> genericInputList = genericInput.getChildGenericInputs();
         System.out.println("the gen input list =======" + genericInputList.toString());
 
-        for (GenericInputList tempGenericInput : genericInputList) {
+        for (GenericSoapInputField tempGenericInput : genericInputList) {
             if (tempGenericInput.getChildGenericInputs().size() > 0) {
                 counter++;
                 htmlForm += "<fieldset><legend>" + tempGenericInput.getFieldName() + "</legend>";
@@ -62,7 +62,7 @@ public final class SimsHTMLGenerator {
         return htmlForm;
     }
 
-    public static String generateHTMLFieldForSimpleInput(GenericInputList genericInput) {
+    public static String generateHTMLFieldForSimpleInput(GenericSoapInputField genericInput) {
         List<String> suggestedValues = genericInput.getSuggestedValues();
         String selectorOptions = "";
         if (suggestedValues.size() > 0) {

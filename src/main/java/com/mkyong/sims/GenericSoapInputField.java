@@ -1,36 +1,49 @@
 package com.mkyong.sims;
 
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by tigrank on 8/31/2015.
+ */
 public class GenericSoapInputField {
-    private String className;
+
     private String fieldName;
     private boolean isMandatory;
     private String value;
     private String xPath;
+    private boolean isList;
     private List<String> suggestedValues;
-    private List<GenericSoapInputField> childFields;
-    private String imagePath;
+    private List<GenericSoapInputField> childGenericInputs;
 
     public GenericSoapInputField() {
-
+        childGenericInputs = new ArrayList<GenericSoapInputField>();
+        suggestedValues = new ArrayList<String>();
     }
 
-    public GenericSoapInputField(String className, String fieldName,
-                                 boolean isMandatory, String value, List<String> suggestedValues) {
-        this.className = className;
+    public GenericSoapInputField(String xPath, String fieldName, Boolean isList,
+                                 boolean isMandatory, String value) {
+        this.xPath = xPath;
         this.fieldName = fieldName;
         this.isMandatory = isMandatory;
         this.value = value;
-        this.suggestedValues = suggestedValues;
+        this.isList = isList;
+        childGenericInputs = new ArrayList<GenericSoapInputField>();
+        suggestedValues = new ArrayList<String>();
     }
 
-    public String getClassName() {
-        return className;
+    public GenericSoapInputField(String className, String fieldName, boolean isMandatory,
+                                 String value, String xPath, Boolean isList) {
+        this.xPath = xPath;
+        this.fieldName = fieldName;
+        this.isMandatory = isMandatory;
+        this.value = value;
+        this.isList = isList;
+        childGenericInputs = new ArrayList<GenericSoapInputField>();
     }
 
-    public void setClassName(String className) {
-        this.className = className;
+    public void addGenericInputIntoInnerList(GenericSoapInputField genericInput) {
+        childGenericInputs.add(genericInput);
     }
 
     public String getFieldName() {
@@ -73,23 +86,31 @@ public class GenericSoapInputField {
         this.suggestedValues = suggestedValues;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public List<GenericSoapInputField> getChildGenericInputs() {
+        return childGenericInputs;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setChildGenericInputs(List<GenericSoapInputField> childGenericInputs) {
+        this.childGenericInputs = childGenericInputs;
+    }
+
+    public boolean isList() {
+        return isList;
+    }
+
+    public void setIsList(boolean isList) {
+        this.isList = isList;
     }
 
     @Override
     public String toString() {
         return "{" +
-                "\"className\":\"" + className +
-                "\", \"fieldName\":\"" + fieldName +
+                "\"fieldName\":\"" + fieldName +
                 "\", \"suggestedValues\":\"" + suggestedValues +
-                "\", \"isMandatory\":\"" + isMandatory +
+                "\",  \"isMandatory\":\"" + isMandatory +
                 "\", \"value\":\"" + value + "\", \"xPath\":\"" +
-                xPath + "\", \"imagePath\": \"" + imagePath + "\"" + '}';
+                xPath + "\", \"childGenericInputs\":" + childGenericInputs +
+                ", \"isList\":\"" + isList + "\"" + '}';
     }
 
 }
