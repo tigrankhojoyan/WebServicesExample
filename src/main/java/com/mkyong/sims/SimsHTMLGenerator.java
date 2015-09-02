@@ -16,6 +16,10 @@ public final class SimsHTMLGenerator {
             "\t\t\t\t\t\t%s\n" + //selectors options in HTML format
             "\t\t\t\t\t</select>";
 
+    private static String addItemButton = "<div class=\"info\"><input type=\"button\" style=\"padding:0px;margin:0px;font-size=1.2em;\" onclick=\"javascript:addItemRMCD();\" value=\"Add Item\" /></div>\n" +
+            "<input type=\"hidden\" id=\"nbOfItemRMCD\" name=\"nbOfItemRMCD\" value=\"0\" /><!-- not used -->\n" +
+            "<div id=\"listItemRMCD\"></div>";
+
 
     public static String generateHTMLFromGenericInput(GenericSoapInputField genericInput) {
         String htmlForm = " <div class=\"dropdown\"><a href=\"#\" class=\"dropdown_header\">basic data</a>\n" +
@@ -31,33 +35,48 @@ public final class SimsHTMLGenerator {
                 String complexTypeHTMLForm = " <div class=\"dropdown\"><a href=\"#\" class=\"dropdown_header\">" +
                         tempGenericInput.getFieldName() + "</a>\n" + "\n" +
                         "        <div class=\"dropdown_content\">\n <fieldset>\n";
+                List<GenericSoapInputField> genericSoapInputFields = tempGenericInput.getChildGenericInputs();
                 String tempComplexHTML = generateHTMLFieldForComplexInput(tempGenericInput, complexTypeHTMLForm, 0);
-                tempComplexHTML += "</fieldset> </div></div>";
+                if(tempGenericInput.isList()) {
+                    tempComplexHTML += addItemButton;
+                }
+                tempComplexHTML += "</fieldset></div></div>";
                 complexTypesHTMLs.add(tempComplexHTML);
             }
         }
+        htmlForm += "</fieldset></div></div>";
         for (String complexTypeHTML : complexTypesHTMLs) {
             htmlForm += complexTypeHTML;
         }
-        htmlForm += "</fieldset></div></div>";
+
         return htmlForm;
     }
 
-    public static String generateHTMLFieldForComplexInput(GenericSoapInputField genericInput, String htmlForm, int counter) {
-        List<GenericSoapInputField> genericInputList = genericInput.getChildGenericInputs();
-        System.out.println("the gen input list =======" + genericInputList.toString());
-
-        for (GenericSoapInputField tempGenericInput : genericInputList) {
+    public static String generateHTMLFieldForComplexInput(GenericSoapInputField genericSoapInputField, String htmlForm, int counter) {
+        List<GenericSoapInputField> genericSoapInputFields = genericSoapInputField.getChildGenericInputs();
+        System.out.println("the gen input list =======" + genericSoapInputFields.toString());
+        for (GenericSoapInputField tempGenericInput : genericSoapInputFields) {
             if (tempGenericInput.getChildGenericInputs().size() > 0) {
-                counter++;
                 htmlForm += "<fieldset><legend>" + tempGenericInput.getFieldName() + "</legend>";
-                generateHTMLFieldForComplexInput(tempGenericInput, htmlForm, counter);
+                for(GenericSoapInputField tempGenericInnerInput: tempGenericInput.getChildGenericInputs()) {
+                    if(tempGenericInnerInput.getChildGenericInputs().size() > 0) {
+                        for (GenericSoapInputField temp : tempGenericInnerInput.getChildGenericInputs()) {
+                            htmlForm +=generateHTMLFieldForSimpleInput(temp);
+                        }
+                    }
+                    htmlForm += generateHTMLFieldForSimpleInput(tempGenericInnerInput) + "\n";
+                }
+                if(tempGenericInput.isList()) {
+                    htmlForm += addItemButton;
+                }
+                htmlForm += "</fieldset>";
+//                generateHTMLFieldForComplexInput(genericSoapInputFields, htmlForm, counter);
+            } else {
+                if(tempGenericInput.isList()) {
+                    htmlForm += addItemButton;
+                }
+                htmlForm += generateHTMLFieldForSimpleInput(tempGenericInput) + "\n";
             }
-            if (counter > 1) {
-                counter = 0;
-                htmlForm += "</fieldset> </div> </div>";
-            }
-            htmlForm += generateHTMLFieldForSimpleInput(tempGenericInput) + "\n";
         }
         return htmlForm;
     }
@@ -79,6 +98,10 @@ public final class SimsHTMLGenerator {
         } else {
             fieldForm = "<p>" + fieldForm + "</p>";
         }
+        if(genericInput.isMandatory()) {
+            fieldForm = fieldForm.replace("<p>", "<p class=\"mandatory\">");
+        }
         return fieldForm;
     }
+
 }

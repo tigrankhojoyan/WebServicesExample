@@ -262,7 +262,7 @@ public final class WSDLUtil {
             }
             //System.out.println("nodeName======" + nodeList.item(i).getNodeName());
         }
-        System.out.println("GenericInputList=======" + genericInputs);
+        System.out.println("GenericSoapInputField=======" + genericInputs);
         return genericInputs;
     }
 
