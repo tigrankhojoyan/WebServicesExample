@@ -1,0 +1,69 @@
+<html>
+<head>
+    <title>Sips</title>
+</head>
+
+<script>
+    function addItem(inputData) {
+        var index = inputData.lastIndexOf("/");
+        var element = document.getElementById(inputData);
+        var fieldSet = document.createElement("FIELDSET");
+        var legend = document.createElement("legend");
+        var p = document.createElement("p");
+        var input = document.createElement("input");
+        legend.innerHTML = "element";
+        input.setAttribute("id", "test");
+        input.setAttribute("value", "valod");
+        p.appendChild(input);
+//        legend.appendChild(p);
+        fieldSet.appendChild(legend);
+        fieldSet.appendChild(p);
+        var divElement = document.getElementById("listItemRMCD");
+        divElement.appendChild(fieldSet);
+        alert(inputData);
+    }
+</script>
+<body>
+
+<fieldset>
+    <legend>bypassCtrlList</legend>
+    <div><input type="button" style="padding:0px;margin:0px;font-size=1.2em;"
+                onclick="javascript:addItem('cardOrderInput/fraudData/bypassCtrlList/bypassCtrl')"
+                value="Add Item"/></div>
+    <input type="hidden" id="nbOfItemRMCD" name="nbOfItemRMCD" value="0"/>
+
+    <div id="listItemRMCD"></div>
+    <p><label for="bypassCtrl">bypassCtrl</label>
+        <input name="cardOrderInput/fraudData/bypassCtrlList/bypassCtrl"
+               id="cardOrderInput/fraudData/bypassCtrlList/bypassCtrl" type="text" value="null"/></p>
+
+</fieldset>
+
+<div class="dropdown"><a href="#" class="dropdown_header">riskManagementCustomDataList</a>
+
+    <div class="dropdown_content">
+        <fieldset>
+            <fieldset>
+                <legend>riskManagementCustomData</legend>
+                <p><label for="riskManagementCustomSequence">riskManagementCustomSequence</label>
+                    <input name="cardOrderInput/riskManagementCustomDataList/riskManagementCustomData/riskManagementCustomSequence"
+                           id="cardOrderInput/riskManagementCustomDataList/riskManagementCustomData/riskManagementCustomSequence"
+                           type="text" value="null"/></p>
+
+                <p><label for="riskManagementCustomValue">riskManagementCustomValue</label>
+                    <input name="cardOrderInput/riskManagementCustomDataList/riskManagementCustomData/riskManagementCustomValue"
+                           id="cardOrderInput/riskManagementCustomDataList/riskManagementCustomData/riskManagementCustomValue"
+                           type="text" value="null"/></p>
+
+                <div class="info"><input type="button" style="padding:0px;margin:0px;font-size=1.2em;"
+                                         onclick="javascript:addItem(cardOrderInput/riskManagementCustomDataList/riskManagementCustomData);"
+                                         value="Add Item"/></div>
+                <input type="hidden" id="nbOfItemRMCD" name="nbOfItemRMCD" value="0"/>
+
+                <div id="listItemRMCD1"></div>
+            </fieldset>
+        </fieldset>
+    </div>
+</div>
+</body>
+</html>

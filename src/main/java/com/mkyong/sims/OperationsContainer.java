@@ -18,7 +18,7 @@ public class OperationsContainer {
 
     private OperationsContainer() {
         //todo will be got from property file
-        operationsGenericInputs = SoapUtils.getOperationFields("file:///C:/Users/tigrank/Desktop/PagesWSDL/page.xml");
+        operationsGenericInputs = SoapUtils.getOperationFields("file:///home/tigran/Desktop/Wsdl-soap/page.xml");
 
         System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         System.out.println(operationsGenericInputs);

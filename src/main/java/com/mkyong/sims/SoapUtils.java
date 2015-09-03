@@ -30,6 +30,7 @@ public abstract class SoapUtils {
                     operationInput.addChild(parentInput);
                     addChildElements(parentComplexType, parentInput);
                 }
+                operationsGenericInputs.put(operation.getName(), operationInput);
             }
         }
         return operationsGenericInputs;
