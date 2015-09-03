@@ -41,7 +41,7 @@ public class HelloWorldWSTest {
         defaultValues.put("interfaceVersion", "IR_WS_2.9");
         defaultValues.put("messageVersion", "0.1");
         defaultValues.put("transactionReference", "SIM20150828115034");
-        HashMap<String, GenericSoapInputField> genericInputListHashMap = SoapUtils.getOperationFields("file:///home/tigran/Desktop/Wsdl-soap/page.xml");
+        HashMap<String, GenericSoapInputField> genericInputListHashMap = SoapUtils.getOperationFields("file:///C:/Users/tigrank/Desktop/PagesWSDL/page.xml");
         GenericSoapInputField genericInput = genericInputListHashMap.get("creditTransferFinalizeAndOrder");
         SoapUtils.setDefaultValuesOfOperation(genericInput, defaultValues);
         System.out.println("genericInput ======== " + genericInput);
@@ -49,17 +49,21 @@ public class HelloWorldWSTest {
         suggestedValues.add("123");
         suggestedValues.add("432");
         suggestedValues.add("43552");
-        genericInput.getChildGenericInputs().get(0).setSuggestedValues(suggestedValues);
+        genericInput.getChildElements().get(0).setSuggestedValues(suggestedValues);
         String html = SimsHTMLGenerator.generateHTMLFromGenericInput(genericInput);
         System.out.println("html data=============" + html);
     }
 
     @org.junit.Test
     public void testGetHelloWorld() throws Exception {
-        HashMap<String, GenericSoapInputField> genericInputListHashMap = SoapUtils.getOperationFields("file:///home/tigran/Desktop/Wsdl-soap/page.xml");
+        HashMap<String, GenericSoapInputField> genericInputListHashMap = SoapUtils.getOperationFields("file:///C:/Users/tigrank/Desktop/PagesWSDL/page.xml");
         GenericSoapInputField genericInput = genericInputListHashMap.get("cardOrder");
         String html = SimsHTMLGenerator.generateHTMLFromGenericInput(genericInput);
         System.out.println("html data=============" + html);
+        /*for(String xPath:SimsHTMLGenerator.getListFieldsHtml().keySet()) {
+            System.out.println("xPath==========" + xPath);
+            System.out.println("htmlInput=======" + SimsHTMLGenerator.getListFieldsHtml().get(xPath));
+        }*/
     }
 
     @org.junit.Test

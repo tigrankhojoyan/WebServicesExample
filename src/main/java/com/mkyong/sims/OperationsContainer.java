@@ -1,6 +1,7 @@
 package com.mkyong.sims;
 
 import javax.xml.soap.SOAPMessage;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,12 +11,18 @@ import java.util.List;
 public class OperationsContainer {
 
     private static OperationsContainer instance = null;
-    private static HashMap<String, List<GenericSoapInputField>> operationsGenericInputs =
-            new HashMap<String, List<GenericSoapInputField>>();
-    private static HashMap<String, SOAPMessage> soapRequestTemplates = new HashMap<String, SOAPMessage>();
+    private static HashMap<String, GenericSoapInputField> operationsGenericInputs =
+            new HashMap<String, GenericSoapInputField>();
+
+    private static List<String> currentElementXpathList = new ArrayList<String>();
 
     private OperationsContainer() {
+        //todo will be got from property file
+        operationsGenericInputs = SoapUtils.getOperationFields("file:///C:/Users/tigrank/Desktop/PagesWSDL/page.xml");
 
+        System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        System.out.println(operationsGenericInputs);
+        System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     }
 
     public static OperationsContainer getInstance() {
@@ -25,19 +32,27 @@ public class OperationsContainer {
         return instance;
     }
 
-    public static HashMap<String, List<GenericSoapInputField>> getOperationsGenericInputs() {
+    public static HashMap<String, GenericSoapInputField> getOperationsGenericInputs() {
         return operationsGenericInputs;
     }
 
-    public static void setOperationsGenericInputs(HashMap<String, List<GenericSoapInputField>> operationsGenericInputs) {
+    public static void setOperationsGenericInputs(HashMap<String, GenericSoapInputField> operationsGenericInputs) {
         instance.operationsGenericInputs = operationsGenericInputs;
     }
 
-    public static HashMap<String, SOAPMessage> getSoapRequestTemplates() {
-        return soapRequestTemplates;
+    public static List<String> getCurrentElementXpathList() {
+        return currentElementXpathList;
     }
 
-    public static void setSoapRequestTemplates(HashMap<String, SOAPMessage> soapRequestTemplates) {
-        OperationsContainer.soapRequestTemplates = soapRequestTemplates;
+    public static void setCurrentElementXpathList(List<String> currentElementXpathList) {
+        OperationsContainer.currentElementXpathList = currentElementXpathList;
+    }
+
+    public static void addXpathIntoList(String xPath) {
+        currentElementXpathList.add(xPath);
+    }
+
+    public static String getXpaths() {
+        return currentElementXpathList.toString();
     }
 }
