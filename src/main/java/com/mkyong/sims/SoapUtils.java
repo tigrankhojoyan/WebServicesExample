@@ -1,30 +1,70 @@
 package com.mkyong.sims;
 
-import com.predic8.schema.*;
+import com.predic8.schema.ComplexContent;
+import com.predic8.schema.ComplexType;
+import com.predic8.schema.Derivation;
+import com.predic8.schema.Element;
+import com.predic8.schema.Schema;
+import com.predic8.schema.Sequence;
 import com.predic8.wsdl.Definitions;
 import com.predic8.wsdl.Operation;
 import com.predic8.wsdl.PortType;
-import com.predic8.wsdl.WSDLParser;
+import com.predic8.wstool.creator.RequestCreator;
+import com.predic8.wstool.creator.SOARequestCreator;
+import groovy.xml.MarkupBuilder;
+import org.apache.commons.lang.StringUtils;
 
-import java.util.ArrayList;
+import javax.servlet.http.HttpServletRequest;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public abstract class SoapUtils {
 
-    public static HashMap<String, GenericSoapInputField> getOperationFields(String url) {
+    public static String generateSOAPEnvelop(HttpServletRequest request) {
+        Definitions wsdl = OperationsContainer.getDefinitions();
+
+        StringWriter writer = new StringWriter();
+
+        Map<String, String[]> requestParams = request.getParameterMap();
+        Map<String, String> formParams = getFormParams(requestParams);
+
+        SOARequestCreator creator = new SOARequestCreator(wsdl, new RequestCreator(), new MarkupBuilder(writer));
+        creator.setFormParams(formParams);
+
+        creator.createRequest(request.getParameter("wsdlPortTypeName"), request.getParameter("wsdlOperationName"), request.getParameter("wsdlBindingName"));
+
+        return correctSoapEnvelopXml(writer.toString());
+    }
+
+    private static String correctSoapEnvelopXml(String envelopXml) {
+        return envelopXml.replaceAll("ns[1-9]", "urn").replaceAll("s11", "soapenv").replaceAll(" *\\<.*\\/\\>\\n", "");
+    }
+
+    private static Map<String, String> getFormParams(Map<String, String[]> requestParams) {
+        Map<String, String> formParams = new HashMap<String, String>();
+        for (Map.Entry<String, String[]> entry : requestParams.entrySet()) {
+            String xpath = "xpath:";
+            if (entry.getKey().startsWith(xpath) && StringUtils.isNotEmpty(entry.getValue()[0])) {
+                formParams.put(entry.getKey(), entry.getValue()[0]);
+            }
+        }
+        return formParams;
+    }
+
+    public static HashMap<String, GenericSoapInputField> getOperationFields(Definitions definitions) {
         HashMap<String, GenericSoapInputField> operationsGenericInputs = new HashMap<String, GenericSoapInputField>();
-        WSDLParser parser = new WSDLParser();
-        Definitions definitions = parser.parse(url);
         for (PortType portType : definitions.getPortTypes()) {
             for (Operation operation : portType.getOperations()) {
                 GenericSoapInputField operationInput = new GenericSoapInputField();
                 operationInput.setFieldName(operation.getName());
                 for (Schema schema : definitions.getSchemas()) {
-                    ComplexType parentComplexType = schema.getComplexType(schema.getComplexType(operation.getName()).getSequence().getElements().get(0).getType().getLocalPart());
                     GenericSoapInputField parentInput = new GenericSoapInputField();
-                    parentInput.setXpath(parentComplexType.getName());
+                    Element operationInputElement = schema.getComplexType(operation.getName()).getSequence().getElements().get(0);
+                    ComplexType parentComplexType = schema.getComplexType(operationInputElement.getType().getLocalPart());
+                    parentInput.setXpath("xpath:/" + operation.getName() + "/" + operationInputElement.getName());
                     parentInput.setIsMandatory(true);
                     parentInput.setFieldName(parentComplexType.getName());
                     operationInput.addChild(parentInput);
@@ -37,12 +77,21 @@ public abstract class SoapUtils {
     }
 
     public static void setDefaultValuesOfOperation(GenericSoapInputField genericInput, HashMap<String, String> defaultValues) {
-        List<GenericSoapInputField> childGenericInputs = genericInput.getChildElements();
+        List<GenericSoapInputField> childGenericInputs = genericInput.getChildElements().get(0).getChildElements();
         Set<String> defaultValuesFiledNames = defaultValues.keySet();
         for (GenericSoapInputField childGenericInput : childGenericInputs) {
             String fieldName = childGenericInput.getFieldName();
             if (defaultValuesFiledNames.contains(fieldName)) {
                 childGenericInput.setValue(defaultValues.get(fieldName));
+            }
+        }
+    }
+
+    public static void setSuggestedValues(HashMap<String, List<String>> fieldSuggestedValues, GenericSoapInputField genericSoapInputField) {
+        List<GenericSoapInputField> genericSoapInputFields = genericSoapInputField.getChildElements().get(0).getChildElements();
+        for (int i = 0; i < genericSoapInputFields.size(); i++) {
+            if (fieldSuggestedValues.containsKey(genericSoapInputFields.get(i).getFieldName())) {
+                genericSoapInputFields.get(i).setSuggestedValues(fieldSuggestedValues.get(genericSoapInputFields.get(i).getFieldName()));
             }
         }
     }
@@ -109,3 +158,5 @@ public abstract class SoapUtils {
         return !element.getMinOccurs().equals("0");
     }
 }
+
+

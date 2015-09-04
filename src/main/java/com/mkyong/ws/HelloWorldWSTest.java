@@ -57,7 +57,7 @@ public class HelloWorldWSTest {
     @org.junit.Test
     public void testGetHelloWorld() throws Exception {
 
-        HashMap<String, GenericSoapInputField> genericInputListHashMap = SoapUtils.getOperationFields("file:///home/tigran/Desktop/Wsdl-soap/page.xml");
+        HashMap<String, GenericSoapInputField> genericInputListHashMap = SoapUtils.getOperationFields("file:///C:/Users/tigrank/Desktop/PagesWSDL/page.xml");
         GenericSoapInputField genericInput = genericInputListHashMap.get("cardOrder");
         String html = SimsHTMLGenerator.generateHTMLFromGenericInput(genericInput);
         System.out.println("html data=============" + html);

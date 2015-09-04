@@ -1,5 +1,8 @@
 package com.mkyong.sims;
 
+import com.predic8.wsdl.Definitions;
+import com.predic8.wsdl.WSDLParser;
+
 import javax.xml.soap.SOAPMessage;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,25 +14,25 @@ import java.util.List;
 public class OperationsContainer {
 
     private static OperationsContainer instance = null;
-    private static HashMap<String, GenericSoapInputField> operationsGenericInputs =
-            new HashMap<String, GenericSoapInputField>();
-
-    private static List<String> currentElementXpathList = new ArrayList<String>();
+    private static HashMap<String, GenericSoapInputField> operationsGenericInputs = new HashMap<String, GenericSoapInputField>();
+    private static Definitions definitions;
 
     private OperationsContainer() {
+        WSDLParser parser = new WSDLParser();
         //todo will be got from property file
-        operationsGenericInputs = SoapUtils.getOperationFields("file:///home/tigran/Desktop/Wsdl-soap/page.xml");
-
-        System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-        System.out.println(operationsGenericInputs);
-        System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        definitions = parser.parse("file:///C:/Users/tigrank/Desktop/PagesWSDL/page.xml");
+        operationsGenericInputs = SoapUtils.getOperationFields(definitions);
     }
 
-    public static OperationsContainer getInstance() {
-        if(null == instance) {
+    public static void initializeOperationContainer() {
+        if (null == instance) {
             instance = new OperationsContainer();
         }
-        return instance;
+    }
+
+
+    public static Definitions getDefinitions() {
+        return definitions;
     }
 
     public static HashMap<String, GenericSoapInputField> getOperationsGenericInputs() {
@@ -38,21 +41,5 @@ public class OperationsContainer {
 
     public static void setOperationsGenericInputs(HashMap<String, GenericSoapInputField> operationsGenericInputs) {
         instance.operationsGenericInputs = operationsGenericInputs;
-    }
-
-    public static List<String> getCurrentElementXpathList() {
-        return currentElementXpathList;
-    }
-
-    public static void setCurrentElementXpathList(List<String> currentElementXpathList) {
-        OperationsContainer.currentElementXpathList = currentElementXpathList;
-    }
-
-    public static void addXpathIntoList(String xPath) {
-        currentElementXpathList.add(xPath);
-    }
-
-    public static String getXpaths() {
-        return currentElementXpathList.toString();
     }
 }
