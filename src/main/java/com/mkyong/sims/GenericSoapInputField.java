@@ -16,6 +16,10 @@ public class GenericSoapInputField {
     private List<String> suggestedValues;
     private List<GenericSoapInputField> childElements;
 
+    public GenericSoapInputField(){
+        value = "";
+    }
+
     public String getFieldName() {
         return fieldName;
     }

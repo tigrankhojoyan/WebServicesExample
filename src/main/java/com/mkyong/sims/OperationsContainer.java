@@ -20,7 +20,7 @@ public class OperationsContainer {
     private OperationsContainer() {
         WSDLParser parser = new WSDLParser();
         //todo will be got from property file
-        definitions = parser.parse("file:///C:/Users/tigrank/Desktop/PagesWSDL/page.xml");
+        definitions = parser.parse("file:///home/tigran/Desktop/Wsdl-soap/page.xml");
         operationsGenericInputs = SoapUtils.getOperationFields(definitions);
     }
 

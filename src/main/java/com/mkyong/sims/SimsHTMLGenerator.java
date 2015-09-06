@@ -30,6 +30,9 @@ public final class SimsHTMLGenerator {
                     "        <div class=\"dropdown_content\">\n" +
                     "            <fieldset>";
             List<String> complexTypesHTMLs = new ArrayList<String>();
+           /* System.out.println("___________________________________________");
+            System.out.println("genericInput============" + genericInput);
+            System.out.println("___________________________________________");*/
             List<GenericSoapInputField> genericInputList = genericInput.getChildElements().get(0).getChildElements();
             for (GenericSoapInputField tempGenericInput : genericInputList) {
                 if (tempGenericInput.getChildElements() == null) {

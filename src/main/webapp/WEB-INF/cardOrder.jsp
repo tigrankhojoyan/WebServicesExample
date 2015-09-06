@@ -5,31 +5,19 @@
   Time: 5:57 PM
   To change this template use File | Settings | File Templates.
 --%>
-<%@page import="net.atos.sips.sim.sipsofficeconnectv2.soap.GenericSoapInputField" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<jsp:include page="/base_page/header_and_menu.jsp"/>
-<jsp:include page="/base_page/sharedCode.jsp"/>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-
-<%@ page import="net.atos.sips.sim.sipsofficeconnectv2.soap.HTMLGenerator" %>
-<%@ page import="net.atos.sips.sim.sipsofficeconnectv2.soap.OperationsContainer" %>
-<%@ page import="net.atos.sips.sim.sipsofficeconnectv2.soap.SoapUtils" %>
 <%@ page import="java.util.Arrays" %>
 <%@ page import="java.util.HashMap" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ResourceBundle" %>
+<%@ page import="com.mkyong.sims.OperationsContainer" %>
+<%@ page import="com.mkyong.sims.GenericSoapInputField" %>
+<%@ page import="com.mkyong.sims.SoapUtils" %>
+<%@ page import="com.mkyong.sims.SimsHTMLGenerator" %>
 
 <%
-  ResourceBundle bundle = ResourceBundle.getBundle("resource-bindings");
-  String url = bundle.getString("net.atos.sips.cn.contract.office.checkout.v2.CheckoutService");
 
-  String serviceBaseUrl = "";
-  ResourceBundle resourceBundle = ResourceBundle.getBundle("m2m");
-  if (resourceBundle != null) {
-    serviceBaseUrl = resourceBundle.getString("socV2.base_url");
-  }
-
-  String serviceUrl = serviceBaseUrl + "checkout?wsdl";
   String serviceTitle = "Checkout Credit Order";
   String responsePage = "/engine/simsResponse.jsp";
   String nameSpacePrefix = "urn";
@@ -74,23 +62,113 @@
   List<String> paymentPatternSuggestedValues = Arrays.asList("INSTALMENT", "RECURRING_1", "RECURRING_N", "ONE_SHOT", "BAD_VALUE");
   cardOrderSuggestedValues.put("paymentPattern", paymentPatternSuggestedValues);
 
+  OperationsContainer.initializeOperationContainer();
   GenericSoapInputField genericInput = OperationsContainer.getOperationsGenericInputs().get("cardOrder");
 
   SoapUtils.setDefaultValuesOfOperation(genericInput, cardOrderDefaultValues);
   SoapUtils.setSuggestedValues(cardOrderSuggestedValues, genericInput);
-  HTMLGenerator htmlGenerator = new HTMLGenerator();
+  SimsHTMLGenerator htmlGenerator = new SimsHTMLGenerator();
   String formBody = htmlGenerator.generateHTMLFromGenericInput(genericInput);
+  System.out.println(formBody);
+
+  List<String> listXpaths = htmlGenerator.getListsXpaths();
+  String stringListXpaths = "[";
+  for (String xPath : listXpaths) {
+    stringListXpaths += "\"" + xPath + "\",";
+  }
+  stringListXpaths = stringListXpaths.substring(0, stringListXpaths.length() - 1) + "]";
+
 %>
 <script language='javascript'>
-  function init() {
-    assignCurrencyCode("978");
-    assignField('cardExpiryDate', generate_expiry_date_YYYYMM());
-    assignField('transactionReference', genererTransactionReference());
+
+  function addItem(xPath) {
+    //xpath:/cardOrder/input/riskManagementCustomDataList/riskManagementCustomData
+    var listInput = <%=stringListXpaths%>;
+    var dataFields = [];
+    for (i = 0; i < listInput.length; i++) {
+      //alert(listInput[i]);
+      if ((listInput[i].indexOf(xPath) > -1) && (listInput[i].length > xPath.length)) {
+        dataFields.push(listInput[i])
+      }
+    }
+    if (dataFields.length == 0) {
+      addSimpleItem(xPath);
+    } else {
+      var fieldSet = constructFieldSetWithLegend(xPath);
+      for(i = 0; i < dataFields.length; i++) {
+        fieldSet.appendChild(constructField(dataFields[i]));
+      }
+      var insertingDiv = getElementInsertDiv(xPath);
+      insertingDiv.appendChild(fieldSet);
+    }
+    /*alert(listInput);
+     alert(listInput[2]);*/
+    alert(dataFields)
   }
 
-  function addItem(elementXpath) {
-    /* var xPaths =  <%=htmlGenerator.getListsXpaths()%>;
-     alert(xPaths);*/
+  function getElementInsertDiv(xPath) {
+    var index = xPath.lastIndexOf("/");
+    var divId = "listItem" + xPath;
+    var elementInsertingDiv = document.getElementById(divId);
+    return elementInsertingDiv;
+  }
+
+  function constructFieldSetWithLegend(xPath) {
+    var legendName = xPath.substring(xPath.lastIndexOf("/"), xPath.length) +
+            getElementInsertDiv(xPath).childElementCount;
+    var fieldSet = document.createElement("FIELDSET");
+    var legend = document.createElement("legend");
+    legend.innerHTML = legendName;
+    fieldSet.appendChild(legend);
+    return fieldSet;
+  }
+
+  function constructField(xPath) {
+    var index = xPath.lastIndexOf("/");
+    alert(xPath.slice(0, index));
+    var insertingDiv = getElementInsertDiv(xPath.slice(0, index));
+
+    var newId = xPath + "[" + (insertingDiv.childElementCount + 1) + "]";
+    var parentDiv = insertingDiv.parentNode.parentNode.parentNode;
+    parentDiv.setAttribute("class", "");
+    parentDiv.setAttribute("style", "");
+    var p = document.createElement("p");
+    var label = document.createElement("label");
+    var input = document.createElement("input");
+    label.for = xPath.slice(index + 1) + (insertingDiv.childElementCount + 1);
+    label.innerHTML = xPath.slice(index + 1) + (insertingDiv.childElementCount + 1);
+    input.setAttribute("id", newId);
+    input.setAttribute("name", newId);
+    input.setAttribute("value", "");
+    p.appendChild(label);
+    p.appendChild(input);
+    return p;
+  }
+
+  function addSimpleItem(xPath) {
+    var index = xPath.lastIndexOf("/");
+    var divId = "listItem" + xPath.slice(0, index);
+    var addDiv = document.getElementById(divId);
+    var newId = xPath + "[" + (addDiv.childElementCount + 1) + "]";
+    var parentDiv = document.getElementById(divId).parentNode.parentNode.parentNode;
+    parentDiv.setAttribute("class", "");
+    parentDiv.setAttribute("style", "");
+    var p = document.createElement("p");
+    var label = document.createElement("label");
+    var input = document.createElement("input");
+    label.for = xPath.slice(index + 1) + (addDiv.childElementCount + 1);
+    label.innerHTML = xPath.slice(index + 1) + (addDiv.childElementCount + 1);
+    input.setAttribute("id", newId);
+    input.setAttribute("name", newId);
+    input.setAttribute("value", "");
+    p.appendChild(label);
+    p.appendChild(input);
+    addDiv.appendChild(p);
+  }
+
+ /* function addItem(elementXpath) {
+    /!* var xPaths =  <%=htmlGenerator.getListsXpaths()%>;
+     alert(xPaths);*!/
     var index = elementXpath.lastIndexOf("/");
     var divId = "listItem" + elementXpath.slice(0, index);
     var addDiv = document.getElementById(divId);
@@ -110,19 +188,23 @@
     p.appendChild(input);
     addDiv.appendChild(p);
   }
-
+*/
 </script>
 
 <h1>Sips Office SOAP V2 : CardOrder</h1>
 
 <div class="info">
   WebService URL :
-  <%=url%>
+ Jimmy
 </div>
 <hr/>
+<html>
+<head>
+  <title>CardOrder</title>
+</head>
+<body>
 <form id="pwiForm" action="/GenericSoapRequestBuilder" method="post" class="form">
   <%= formBody%>
-  <input type="hidden" id="serviceUrl" name="serviceUrl" value="<%=serviceUrl %>"/>
   <input type="hidden" id="serviceTitle" name="serviceTitle" value="<%=serviceTitle %>"/>
   <input type="hidden" id="responsePage" name="responsePage" value="<%=responsePage %>"/>
   <input type="hidden" id="nameSpacePrefix" name="nameSpacePrefix" value="<%=nameSpacePrefix %>"/>
@@ -136,7 +218,5 @@
   <input type="button" name="clear" id="clear" class="clear" value="Clear Form" onclick="clearForm('pwiForm')"/>
 </form>
 
-<script type="text/javascript">
-  init();
-</script>
-<jsp:include page="/base_page/footer.jsp"/>
+</body>
+</html>
