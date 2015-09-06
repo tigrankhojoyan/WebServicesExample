@@ -48,6 +48,17 @@
 		<url-pattern>/Response.htm</url-pattern>
 	</servlet-mapping>
 
+
+	<servlet>
+		<servlet-name>cardOrder.jsp</servlet-name>
+		<jsp-file>/WEB-INF/cardOrder.jsp</jsp-file>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>cardOrder.jsp</servlet-name>
+		<url-pattern>/cardOrder.htm</url-pattern>
+	</servlet-mapping>
+
 	<servlet>
 		<servlet-name>TestServlet</servlet-name>
 		<servlet-class>com.mkyong.ws.TestServlet</servlet-class>
